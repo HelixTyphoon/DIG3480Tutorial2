@@ -12,13 +12,29 @@ public class PlayerScript : MonoBehaviour
 
     public Text score;
 
+    public Text lives;
+
+    public Text winText;
+
     private int scoreValue = 0;
+
+    private int livesValue = 3;
+
+    public AudioSource musicSource;
+
+    public AudioClip musicClipOne;
+
+    public AudioClip musicClipTwo;
 
     // Start is called before the first frame update
     void Start()
     {
         rd2d = GetComponent<Rigidbody2D>();
         score.text = scoreValue.ToString();
+        lives.text = livesValue.ToString();
+        winText.text = "";
+        musicSource.clip = musicClipOne;
+        musicSource.Play();
     }
 
     // Update is called once per frame
@@ -40,6 +56,34 @@ public class PlayerScript : MonoBehaviour
             scoreValue += 1;
             score.text = scoreValue.ToString();
             Destroy(collision.collider.gameObject);
+
+            if (scoreValue == 4)
+            {
+                transform.position = new Vector2 (31.0f,1.0f);
+                livesValue = 3;
+                lives.text = livesValue.ToString();
+            }
+
+            if (scoreValue == 8)
+            {
+                winText.text ="You Win! Game made by Trent Sweeney.";
+                musicSource.clip = musicClipTwo;
+                musicSource.Play();
+                musicSource.loop = false;
+            }
+        }
+
+        if(collision.collider.tag == "Enemy")
+        {
+            livesValue -= 1;
+            lives.text = livesValue.ToString();
+            Destroy(collision.collider.gameObject);
+
+            if (livesValue == 0)
+            {
+                winText.text = "Game Over! Game made by Trent Sweeney";
+                Destroy(gameObject);
+            }
         }
     }
 
